@@ -14,7 +14,7 @@
 #include "pngpriv.h"
 
 #ifdef PNG_WRITE_SUPPORTED
-
+#define PNG_WRITE_INT_FUNCTIONS_SUPPORTED//手动添加的模块
 #ifdef PNG_WRITE_INT_FUNCTIONS_SUPPORTED
 /* Place a 32-bit number into a buffer in PNG byte order.  We work
  * with unsigned numbers for convenience, although one supported

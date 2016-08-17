@@ -31,6 +31,9 @@
 #include "../swell/swell-types.h" // use SWELL on other systems
 #endif
 
+#pragma comment(lib,"Winmm.lib")
+#pragma warning(disable:4996)
+
 
 // one of these can be defined in your project if you choose:
 //#define LICE_FAVOR_SPEED // optimizes some stuff that doesnt seem to benefit much (like LICE_DeltaBlit/LICE_RotatedBlit/LICE_TransformBlit)
