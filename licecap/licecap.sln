@@ -1,12 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "licecap_cli", "licecap_cli.vcxproj", "{AD3E2CED-A962-5F10-3E99-AEB141934B8C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "licecap_cli", "licecap_cli.vcxproj", "{5D371EBB-D76C-6547-8A20-C214125D6C70}"
 	ProjectSection(ProjectDependencies) = postProject
-		{75F8B18F-3EAB-3436-57DD-1FDB92E660A3} = {75F8B18F-3EAB-3436-57DD-1FDB92E660A3}
+		{A6D995CB-BA0D-9768-1805-A2B1A3A12F5E} = {A6D995CB-BA0D-9768-1805-A2B1A3A12F5E}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "licecap_gui", "licecap_gui.vcxproj", "{75F8B18F-3EAB-3436-57DD-1FDB92E660A3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "licecap_gui", "licecap_gui.vcxproj", "{A6D995CB-BA0D-9768-1805-A2B1A3A12F5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +15,18 @@ Global
 		Template|Win32 = Template|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AD3E2CED-A962-5F10-3E99-AEB141934B8C}.Debug|Win32.ActiveCfg = Debug|Win32
-		{AD3E2CED-A962-5F10-3E99-AEB141934B8C}.Debug|Win32.Build.0 = Debug|Win32
-		{AD3E2CED-A962-5F10-3E99-AEB141934B8C}.Release|Win32.ActiveCfg = Release|Win32
-		{AD3E2CED-A962-5F10-3E99-AEB141934B8C}.Release|Win32.Build.0 = Release|Win32
-		{AD3E2CED-A962-5F10-3E99-AEB141934B8C}.Template|Win32.ActiveCfg = Release|Win32
-		{AD3E2CED-A962-5F10-3E99-AEB141934B8C}.Template|Win32.Build.0 = Release|Win32
-		{75F8B18F-3EAB-3436-57DD-1FDB92E660A3}.Debug|Win32.ActiveCfg = Debug|Win32
-		{75F8B18F-3EAB-3436-57DD-1FDB92E660A3}.Debug|Win32.Build.0 = Debug|Win32
-		{75F8B18F-3EAB-3436-57DD-1FDB92E660A3}.Release|Win32.ActiveCfg = Release|Win32
-		{75F8B18F-3EAB-3436-57DD-1FDB92E660A3}.Release|Win32.Build.0 = Release|Win32
-		{75F8B18F-3EAB-3436-57DD-1FDB92E660A3}.Template|Win32.ActiveCfg = Template|Win32
-		{75F8B18F-3EAB-3436-57DD-1FDB92E660A3}.Template|Win32.Build.0 = Template|Win32
+		{5D371EBB-D76C-6547-8A20-C214125D6C70}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5D371EBB-D76C-6547-8A20-C214125D6C70}.Debug|Win32.Build.0 = Debug|Win32
+		{5D371EBB-D76C-6547-8A20-C214125D6C70}.Release|Win32.ActiveCfg = Release|Win32
+		{5D371EBB-D76C-6547-8A20-C214125D6C70}.Release|Win32.Build.0 = Release|Win32
+		{5D371EBB-D76C-6547-8A20-C214125D6C70}.Template|Win32.ActiveCfg = Release|Win32
+		{5D371EBB-D76C-6547-8A20-C214125D6C70}.Template|Win32.Build.0 = Release|Win32
+		{A6D995CB-BA0D-9768-1805-A2B1A3A12F5E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A6D995CB-BA0D-9768-1805-A2B1A3A12F5E}.Debug|Win32.Build.0 = Debug|Win32
+		{A6D995CB-BA0D-9768-1805-A2B1A3A12F5E}.Release|Win32.ActiveCfg = Release|Win32
+		{A6D995CB-BA0D-9768-1805-A2B1A3A12F5E}.Release|Win32.Build.0 = Release|Win32
+		{A6D995CB-BA0D-9768-1805-A2B1A3A12F5E}.Template|Win32.ActiveCfg = Template|Win32
+		{A6D995CB-BA0D-9768-1805-A2B1A3A12F5E}.Template|Win32.Build.0 = Template|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
