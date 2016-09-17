@@ -29,6 +29,7 @@
 #include "../WDL/queue.h"
 #include "../WDL/mutex.h"
 #include "../WDL/wdlcstring.h"
+#include "UtilLog/UtilLog.h"
 
 
 //#define TEST_MULTIPLE_MODES
@@ -85,7 +86,7 @@ HINSTANCE g_hInst;
 #define MIN_SIZE_Y 120
 
 
-
+//Gif编码类
 class gif_encoder
 {
 
@@ -99,7 +100,12 @@ class gif_encoder
 
 public:
 
-
+  /*
+  @bref 将内存数据进行GIF编码
+  @param gifctx：gif数据的上下文
+  @param use_loopcnt：设置Gif循环播放的参数
+  @param trans_chan_mask：GIF图片背景透明度的设置
+  */
   gif_encoder(void *gifctx, int use_loopcnt, int trans_chan_mask=0xff)
   {
     lastbm = NULL;
@@ -124,7 +130,8 @@ public:
     diffs[3]=bm->getHeight();
     return !lastbm || LICE_BitmapCmpEx(lastbm, bm, trans_mask,diffs);
   }
-  
+
+  //
   void frame_finish()
   {
     if (ctx && lastbm && lastbm_coords[2] > 0 && lastbm_coords[3] > 0)
@@ -633,7 +640,7 @@ void UpdateStatusText(HWND hwndDlg)
   }
 }
 
-
+//修改
 void UpdateCaption(HWND hwndDlg)
 {
   if (!g_cap_state) 
@@ -793,6 +800,7 @@ WDL_DLGRET VideoOptionsProc(HWND hwndDlg, UINT Message, WPARAM wParam, LPARAM lP
 }
 #endif
 
+//保存文件对话框里的设置信息
 static UINT_PTR CALLBACK SaveOptsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   switch (msg)
@@ -801,12 +809,11 @@ static UINT_PTR CALLBACK SaveOptsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPA
     {
       //ShowWindow(GetDlgItem(hwndDlg, IDC_TIMELINE), SW_HIDE);
       if (g_prefs&1) CheckDlgButton(hwndDlg, IDC_TITLEUSE, BST_CHECKED);
-      if (g_prefs&2) CheckDlgButton(hwndDlg, IDC_BIGFONT, BST_CHECKED);
+      if (g_prefs&2) CheckDlgButton(hwndDlg, IDC_BIGFONT,  BST_CHECKED);
       if (g_prefs&4) CheckDlgButton(hwndDlg, IDC_MOUSECAP, BST_CHECKED);
       if (g_prefs&8) CheckDlgButton(hwndDlg, IDC_TIMELINE, BST_CHECKED);
       if (g_prefs&16) CheckDlgButton(hwndDlg, IDC_SSPAUSE, BST_CHECKED);
-      if (g_prefs&32) CheckDlgButton(hwndDlg, IDC_CHECK1, BST_CHECKED);
-      
+      if (g_prefs&32) CheckDlgButton(hwndDlg, IDC_CHECK1,  BST_CHECKED);
 
       if (g_prefs&64) 
       {
@@ -900,6 +907,8 @@ static UINT_PTR CALLBACK SaveOptsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPA
   return 0;
 }
 
+
+//写入文本位图数据，也就是将文本转换为位图，方便用户插入到GIf中
 void WriteTextFrame(const char* str, int ms, bool isTitle, int w, int h, double bgAlpha=1.0f)
 {
   if (isTitle)
@@ -907,6 +916,7 @@ void WriteTextFrame(const char* str, int ms, bool isTitle, int w, int h, double 
 
   if (str)
   {
+	  LOG_FORMATOUTA("当前输入数据为：%s",str);
     int tw=w;
     int th=h;   
 
@@ -923,8 +933,11 @@ void WriteTextFrame(const char* str, int ms, bool isTitle, int w, int h, double 
     }
     else
     {
+		//创建内存位图，并将文本数据拷贝到内存位图中，然后生成相应的新位图
       tbm = LICE_CreateMemBitmap(tw, th); 
+	  LOG_FORMATOUTA("创建临时位图：%d	%d",tw,th);
       LICE_Copy(tbm, g_cap_bm_txt);
+	  LOG_FORMATOUTA("位图数据：%d	%d",g_cap_bm_txt->getHeight(),g_cap_bm_txt->getWidth());
       LICE_FillRect(tbm, 0,0,w,h, LICE_RGBA(0,0,0,255), bgAlpha, LICE_BLIT_MODE_COPY|LICE_BLIT_USE_ALPHA);
     }
     /*
@@ -935,6 +948,7 @@ void WriteTextFrame(const char* str, int ms, bool isTitle, int w, int h, double 
     char buf[4096];
     lstrcpyn_safe(buf, str,sizeof(buf));                    
 
+	//判断当前文本究竟有多少个换行符，从而决定其文本绘制的方式
     int numlines=1;
     char* p = strstr(buf, "\n");
     while (p)
@@ -944,19 +958,23 @@ void WriteTextFrame(const char* str, int ms, bool isTitle, int w, int h, double 
       ++numlines;
     }
 
+	//根据换行符的个数来计算文本绘制的区域
     p=buf;
     int i;
     for (i = 0; i < numlines; ++i)
     {                   
       int txtw, txth;
       LICE_MeasureText(p, &txtw, &txth);
+	  LOG_FORMATOUTA("测量当前文本的宽度和高度：%d	%d",txtw,txth);
       LICE_DrawText(tbm, (tw-txtw)/2, (th-txth*numlines*4)/2+txth*i*4, p, LICE_RGBA(255,255,255,255), 1.0f, LICE_BLIT_MODE_COPY);
+		LOG_FORMATOUTA("绘制文本");
       p += strlen(p)+1;
     }
 
     if (tbm != g_cap_bm)
     {
       LICE_ScaledBlit(g_cap_bm, tbm, 0, 0, w, h, 0, 0, tw, th, 1.0f, LICE_BLIT_MODE_COPY);
+	  LOG_FORMATOUTA("将文本位图进行缩放处理");
       delete tbm;
     }
   }
@@ -978,6 +996,7 @@ void WriteTextFrame(const char* str, int ms, bool isTitle, int w, int h, double 
 
   if (g_cap_gif)
   {
+	  LOG_LINEOUTA("完成每帧的数据处理");
     g_cap_gif->frame_finish(); 
     g_cap_gif->frame_new(g_cap_bm,0,0,g_cap_bm->getWidth(),g_cap_bm->getHeight());
     g_cap_gif->frame_advancetime(ms);
@@ -1082,6 +1101,7 @@ bool GetScreenData(int xpos, int ypos, LICE_IBitmap *bmOut);
 #endif
 
 
+//保存用户设置到本地磁盘上
 void SaveConfig(HWND hwndDlg)
 {
   char buf[1024];
@@ -1142,26 +1162,33 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
       g_wndsize.init_item(IDC_STOP,1,1,1,1);
       g_wndsize.init_item(IDC_INSERT,1,1,1,1);
       
-      ShowWindow(GetDlgItem(hwndDlg, IDC_INSERT), SW_HIDE);
+	  LOG_LINEOUTA("IDC_INSERT显示出来");
+	  ShowWindow(GetDlgItem(hwndDlg, IDC_INSERT), SW_SHOW);//窗口正常
+      //ShowWindow(GetDlgItem(hwndDlg, IDC_INSERT), SW_HIDE);//窗口隐藏
       SendMessage(hwndDlg,WM_SIZE,0,0);
 
       ++g_reent;
 
       g_gif_loopcount = GetPrivateProfileInt("licecap","gifloopcnt",g_gif_loopcount,g_ini_file.Get());
+	  LOG_FORMATOUTA("g_gif_loopcount：%d",g_gif_loopcount);
       g_max_fps = GetPrivateProfileInt("licecap", "maxfps", g_max_fps, g_ini_file.Get());
-      SetDlgItemInt(hwndDlg,IDC_MAXFPS,g_max_fps,FALSE);
+	  LOG_FORMATOUTA("g_max_fps：%d",g_max_fps);
+      SetDlgItemInt(hwndDlg,IDC_MAXFPS,g_max_fps,FALSE);//设置GIF最大的fps值
       --g_reent;
 
       Capture_Finish(hwndDlg);
 
       UpdateCaption(hwndDlg);
+	  LOG_LINEOUTA("更新标题文本");
       UpdateStatusText(hwndDlg);
+	  LOG_LINEOUTA("更新状态文本");
 
       SetTimer(hwndDlg,1,30,NULL);
 
       {
         char buf[1024];
         GetPrivateProfileString("licecap","wnd_r","",buf,sizeof(buf),g_ini_file.Get());
+		LOG_FORMATOUTA("当前获得wnd_r的数值",buf);
         int a[4]={0,};
         const char *p=buf;
         int x;
@@ -1176,13 +1203,17 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
         if (*p && a[2]>a[0] && a[3]!=a[1]) SetWindowPos(hwndDlg,NULL,a[0],a[1],a[2]-a[0],a[3]-a[1],SWP_NOZORDER|SWP_NOACTIVATE);
 
       }
+
       UpdateDimBoxes(hwndDlg);
-
+	  LOG_LINEOUTA("正在执行UpdateDimBoxes");
       g_prefs = GetPrivateProfileInt("licecap", "prefs", g_prefs, g_ini_file.Get());
+		LOG_FORMATOUTA("获得prefs的数值：%d",g_prefs);
       g_titlems = GetPrivateProfileInt("licecap", "titlems", g_titlems, g_ini_file.Get());
+	  LOG_FORMATOUTA("获得titlems的数值：%d",g_titlems);
       g_stop_after_msec = GetPrivateProfileInt("licecap", "stopafter", g_stop_after_msec, g_ini_file.Get());
-
+	  LOG_FORMATOUTA("获得stopafter的数值：%d",g_stop_after_msec);
       GetPrivateProfileString("licecap","title","",g_title,sizeof(g_title),g_ini_file.Get());
+	  LOG_FORMATOUTA("获得g_title的数值：%s",g_title);
 
 #ifdef VIDEO_ENCODER_SUPPORT
       g_cap_video_vbr = GetPrivateProfileInt("licecap", "video_vbr", g_cap_video_vbr, g_ini_file.Get());
@@ -1193,8 +1224,10 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
     case WM_DESTROY:
 
       Capture_Finish(hwndDlg);
+	  LOG_LINEOUTA("结束捕捉");
 
       SaveConfig(hwndDlg);
+	  LOG_LINEOUTA("保存用户参数设置");
 
       g_wndsize.init(hwndDlg);
       g_hwnd=NULL;
@@ -1403,6 +1436,7 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
     break;
 #ifdef _WIN32
     case WM_HOTKEY:
+		//Control+Alt+P
       if (lParam == MAKELPARAM(MOD_CONTROL|MOD_ALT, 'P') && (g_prefs&16)) // prefs check not necessary
       {
         SendMessage(hwndDlg, WM_COMMAND, IDC_REC, 0);
@@ -1447,10 +1481,12 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
     break;
 #endif
 
+	//响应子控件的各种事件
     case WM_COMMAND:
       switch (LOWORD(wParam))
       {
-        case IDC_MAXFPS:
+        case IDC_MAXFPS://设置最大FPS
+			LOG_LINEOUTA("IDC_MAXFPS");
           if (HIWORD(wParam) == EN_CHANGE && !g_reent)
           {          
             BOOL t;
@@ -1459,8 +1495,9 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
           }
         break;
 
-        case IDC_XSZ:
+        case IDC_XSZ://窗口拉伸
         case IDC_YSZ:
+			LOG_LINEOUTA("IDC_XSZ/IDC_YSZ");
           if (HIWORD(wParam) == EN_CHANGE && !g_cap_state && !g_reent)
           {
             int ox, oy;
@@ -1468,6 +1505,7 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
             int nx=ox;
             int ny=oy;
+			LOG_FORMATOUTA("nx:%d	ny:%d",nx,ny);
 
             BOOL t;
             int a=GetDlgItemInt(hwndDlg, IDC_XSZ, &t, FALSE);
@@ -1491,22 +1529,25 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
           }
         break;
 
-        case IDC_STOP:
+        case IDC_STOP://停止录制
+			LOG_LINEOUTA("IDC_STOP");
           ShowWindow(GetDlgItem(hwndDlg, IDC_INSERT), SW_HIDE);
           g_insert_cnt=0;
-          Capture_Finish(hwndDlg);
-          UpdateCaption(hwndDlg);
-          UpdateStatusText(hwndDlg);
+          Capture_Finish(hwndDlg);//结束捕捉事件
+          UpdateCaption(hwndDlg);//更新标题
+          UpdateStatusText(hwndDlg);//更新静态文本
 
 #ifdef _WIN32
           if (g_prefs&16)
           {          
+			  //注销热键
             UnregisterHotKey(hwndDlg, IDC_REC);
           }
 #endif
         break;
 
-        case IDC_INSERT:
+        case IDC_INSERT://插入文本帧
+			LOG_LINEOUTA("IDC_INSERT");
           if (!g_cap_bm_txt)
           {
             int w,h;
@@ -1514,12 +1555,14 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             g_cap_bm_txt = LICE_CreateSysBitmap(w,h);
             LICE_Copy(g_cap_bm_txt, g_cap_bm);
           }
+		  LOG_LINEOUTA("打开插入窗口，将文本帧插入到GIF序列中");
           DialogBox(g_hInst,MAKEINTRESOURCE(IDD_INSERT),hwndDlg,InsertProc);
           g_last_frame_capture_time=timeGetTime();
+		  LOG_FORMATOUTA("timeGetTime：%u",g_last_frame_capture_time);
         break;
 
-        case IDC_REC:
-
+        case IDC_REC://开始录制
+			LOG_FORMATOUTA("当前g_cap_state值为：%d，用来判断是否开启录制功能",g_cap_state);
           if (!g_cap_state)
           {
             //g_title[0]=0;
@@ -1535,11 +1578,14 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             };
 
             WDL_Queue qb;
+			LOG_FORMATOUTA("创建一个WDL_Queue");
             int bm=0;
             const int lfnlen=strlen(g_last_fn);
+			LOG_FORMATOUTA("g_last_fn：%s",g_last_fn);
             int x;
             if (lfnlen >= 3) for (x=0;tab[x][0];x++)
             {
+				LOG_FORMATOUTA("tab[x][1]：%s",tab[x][1]);
               const int tx1l = strlen(tab[x][1]);
               if (lfnlen > tx1l && !stricmp(g_last_fn + lfnlen - tx1l, tab[x][1])) 
               {
@@ -1547,6 +1593,7 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
                 break;
               }
             }
+			LOG_FORMATOUTA("执行for (x=bm;tab[x][0];x++)");
             for (x=bm;tab[x][0];x++)
             {
               const char *p=tab[x][0];
@@ -1554,9 +1601,11 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
               {
                 int l = strlen(p)+1;
                 qb.Add(p,l);
-                p+=l;
+				LOG_FORMATOUTA("qb.Add(p,l)：p：%s",p);
+				p+=l;
               }
             }
+			LOG_FORMATOUTA("执行for (x=0;x<bm;x++)");
             for (x=0;x<bm;x++)
             {
               const char *p=tab[x][0];
@@ -1569,7 +1618,7 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             }
 
             qb.Add("",1);
-
+			LOG_FORMATOUTA("打开保存文件对话框");
             if (WDL_ChooseFileForSave(hwndDlg, "Choose file for recording", NULL, g_last_fn,
               (char*)qb.Get(), tab[bm][1] + 1, false, g_last_fn, sizeof(g_last_fn),
               MAKEINTRESOURCE(IDD_SAVEOPTS),(void*)SaveOptsProc, 
@@ -1863,6 +1912,7 @@ static WDL_DLGRET liceCapMainProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
+	LOG_OPENOUT;//开启后台打印
   bool want_appdata = true;
   g_ini_file.Set("licecap.ini");
 
@@ -1871,6 +1921,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     char exepath[2048];
     exepath[0]=0;
     GetModuleFileName(NULL,exepath,sizeof(exepath));
+	LOG_FORMATOUTA("输出当前程序路径：%s",exepath);
     char *p=exepath;
     while (*p) p++;
     while (p > exepath && *p != '\\') p--; *p=0;
@@ -1879,6 +1930,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     {
       g_ini_file.Set(exepath);
       g_ini_file.Append("\\licecap.ini");
+	  LOG_FORMATOUTA("01当前.ini文件的所在路径：%s",g_ini_file.Get());
       FILE *fp=fopen(g_ini_file.Get(),"r");
       if (fp) 
       {
@@ -1888,7 +1940,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     }
   }
 
-  // use appdata/licecap.ini
+  // use appdata/licecap.ini，将licecap.ini文件路径指向...\AppData\Roming目录下
   if (want_appdata)
   {
     HKEY k;
@@ -1906,11 +1958,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     }
   }
 
-
   GetPrivateProfileString("licecap","lastfn","",g_last_fn,sizeof(g_last_fn),g_ini_file.Get());
+  LOG_FORMATOUTA("02当前.ini文件的所在路径：%s",g_ini_file.Get());
 
   g_hInst = hInstance;
   DialogBox(hInstance,MAKEINTRESOURCE(IDD_DIALOG1),GetDesktopWindow(),liceCapMainProc);
+  LOG_CLOSEOUT;//关闭后台打印
   return 0;
 }
 

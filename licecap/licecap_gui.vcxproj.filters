@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\WDL\giflib\dgif_lib.c" />
+    <ClCompile Include="..\WDL\giflib\egif_lib.c" />
+    <ClCompile Include="..\WDL\giflib\gif_hash.c" />
+    <ClCompile Include="..\WDL\giflib\gifalloc.c" />
+    <ClCompile Include="..\WDL\lice\lice_gif.cpp" />
+    <ClCompile Include="..\WDL\zlib\adler32.c" />
+    <ClCompile Include="..\WDL\zlib\compress.c" />
+    <ClCompile Include="..\WDL\zlib\crc32.c" />
+    <ClCompile Include="..\WDL\zlib\deflate.c" />
+    <ClCompile Include="..\WDL\zlib\infback.c" />
+    <ClCompile Include="..\WDL\zlib\inffast.c" />
+    <ClCompile Include="..\WDL\zlib\inflate.c" />
+    <ClCompile Include="..\WDL\zlib\inftrees.c" />
+    <ClCompile Include="..\WDL\zlib\trees.c" />
+    <ClCompile Include="..\WDL\zlib\uncompr.c" />
+    <ClCompile Include="..\WDL\zlib\zutil.c" />
+    <ClCompile Include="..\WDL\lice\lice.cpp" />
+    <ClCompile Include="..\WDL\lice\lice_arc.cpp" />
+    <ClCompile Include="..\WDL\lice\lice_gif_write.cpp" />
+    <ClCompile Include="..\WDL\lice\lice_lcf.cpp" />
+    <ClCompile Include="..\WDL\lice\lice_line.cpp" />
+    <ClCompile Include="..\WDL\lice\lice_palette.cpp" />
+    <ClCompile Include="..\WDL\lice\lice_text.cpp" />
+    <ClCompile Include="..\WDL\filebrowse.cpp" />
+    <ClCompile Include="..\WDL\win32_utf8.c" />
+    <ClCompile Include="..\WDL\wingui\wndsize.cpp" />
+    <ClCompile Include="licecap_ui.cpp" />
+    <ClCompile Include="UtilLog\UtilLog.cpp">
+      <Filter>UtilLog</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\WDL\zlib\crc32.h" />
+    <ClInclude Include="..\WDL\zlib\deflate.h" />
+    <ClInclude Include="..\WDL\zlib\inffast.h" />
+    <ClInclude Include="..\WDL\zlib\inffixed.h" />
+    <ClInclude Include="..\WDL\zlib\inflate.h" />
+    <ClInclude Include="..\WDL\zlib\inftrees.h" />
+    <ClInclude Include="..\WDL\zlib\trees.h" />
+    <ClInclude Include="..\WDL\lice\lice_lcf.h" />
+    <ClInclude Include="licecap_version.h" />
+    <ClInclude Include="UtilLog\UtilLog.h">
+      <Filter>UtilLog</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="licecap.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="icon1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="UtilLog">
+      <UniqueIdentifier>{4c8f2e12-fce1-42ae-a450-892343e6848e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
